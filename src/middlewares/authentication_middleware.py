@@ -26,8 +26,9 @@ def authenticate(f):
             data = jwt.decode(token, os.environ.get('JWT_SECRET'), algorithms=["HS256"])
             current_user = User.objects.get(id=data['id'])
             current_user.id = str(current_user.id)
+            request.current_user = current_user
         except Exception as e:
             return output_json(data={'message': 'token is invalid'}, code=401, headers={'content-type': 'application/json'})
 
-        return f(current_user, *args, **kwargs)
+        return f(request, *args, **kwargs)
     return decorator

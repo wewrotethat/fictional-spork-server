@@ -42,8 +42,8 @@ class UsersController(Resource):
 class UserController(Resource):
     method_decorators = [authenticate]
 
-    def get(self, current_user, id: str):
-        if current_user.id != id:
+    def get(self, request: Request, id: str):
+        if request.current_user.id != id:
             return output_json(
                 data={"error": "you are not authorized to access this data"},
                 code=403,
@@ -57,8 +57,8 @@ class UserController(Resource):
             user_dict, code=200, headers={"content-type": "application/json"}
         )
 
-    def put(self, current_user, id: str):
-        if current_user.id != id:
+    def put(self, request: Request, id: str):
+        if request.current_user.id != id:
             return output_json(
                 data={"error": "you are not authorized to access this data"},
                 code=403,
