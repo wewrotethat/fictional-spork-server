@@ -6,7 +6,6 @@ from src.models.enums.profile_verification_status import ProfileVerificationStat
 
 
 class User(db.Document):
-    # id = db.ObjectIdField(primary_key=True, db_field='_id')
     first_name = db.StringField(max_length=50, required=True, db_field="firstName")
     last_name = db.StringField(max_length=50, required=True, db_field="lastName")
     medical_license_id = db.StringField(
@@ -22,15 +21,13 @@ class User(db.Document):
         default=ProfileVerificationStatus.UNVERIFIED,
         db_field="profileVerificationStatus",
     )
-    profile_picture = db.StringField(
-        max_length=50, required=True, db_field="profilePicture"
-    )
+    profile_picture_url = db.URLField(required=True, db_field="profilePictureUrl")
     phone_verification_status = db.EnumField(
         PhoneVerificationStatus,
         default=PhoneVerificationStatus.UNVERIFIED,
         db_field="phoneVerificationStatus",
     )
-    # TODO: check this
+
     device_tokens = db.ListField(
         db.StringField(max_length=50), default=[], db_field="deviceTokens"
     )
@@ -50,7 +47,7 @@ class User(db.Document):
             "username": self.username,
             "phoneNumber": self.phone_number,
             "profileVerificationStatus": self.profile_verification_status,
-            "profilePicture": self.profile_picture,
+            "profilePictureUrl": self.profile_picture_url,
             "phoneVerificationStatus": self.phone_verification_status,
             "deviceTokens": self.device_tokens,
             "createdAt": str(self.created_at),
