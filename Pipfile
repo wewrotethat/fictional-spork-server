@@ -8,6 +8,8 @@ flask = "*"
 flask-restful = "*"
 flask-mongoengine = "*"
 python-dotenv = "*"
+bcrypt = "*"
+pyjwt = "*"
 
 [dev-packages]
 black = "*"
