@@ -1,7 +1,6 @@
 import bcrypt
-from json import JSONEncoder
-from black import out
-from flask import request, Response
+from flask import request, Request
+from src.middlewares.authentication_middleware import authenticate
 from src.models.user import User
 from flask_restful import Resource, output_json
 from mongoengine.errors import ValidationError, NotUniqueError
@@ -41,7 +40,16 @@ class UsersController(Resource):
 
 
 class UserController(Resource):
-    def get(self, id: str):
+    method_decorators = [authenticate]
+
+    def get(self, current_user, id: str):
+        if current_user.id != id:
+            return output_json(
+                data={"error": "you are not authorized to access this data"},
+                code=403,
+                headers={"content-type": "application/json"},
+            )
+
         user: User = User.objects.get(id=id)
         user.id = str(user.id)
         user_dict: dict = user.__dict__()
@@ -49,7 +57,13 @@ class UserController(Resource):
             user_dict, code=200, headers={"content-type": "application/json"}
         )
 
-    def put(self, id: str):
+    def put(self, current_user, id: str):
+        if current_user.id != id:
+            return output_json(
+                data={"error": "you are not authorized to access this data"},
+                code=403,
+                headers={"content-type": "application/json"},
+            )
         data: str = request.get_json()
         user: User = User.objects.get(id=id)
         user.update(**data)
