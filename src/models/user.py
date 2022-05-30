@@ -11,7 +11,7 @@ class User(db.Document):
     medical_license_id = db.StringField(
         max_length=50, required=True, unique=True, db_field="medicalLicenseId"
     )
-    username = db.StringField(max_length=50, required=True, unique=True)
+    email = db.EmailField(max_length=50, required=True, unique=True)
     password = db.StringField(required=True)
     phone_number = db.StringField(
         max_length=50, required=True, unique=True, db_field="phoneNumber"
@@ -44,7 +44,7 @@ class User(db.Document):
             "firstName": self.first_name,
             "lastName": self.last_name,
             "medicalLicenseId": self.medical_license_id,
-            "username": self.username,
+            "email": self.email,
             "phoneNumber": self.phone_number,
             "profileVerificationStatus": self.profile_verification_status,
             "profilePictureUrl": self.profile_picture_url,

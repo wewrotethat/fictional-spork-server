@@ -18,9 +18,9 @@ class AuthController(Resource):
         error_response = Response(JSONEncoder().encode({"success": False}), status=400)
         try:
             data: dict = request.json
-            username: str = data["username"]
+            email: str = data["email"]
             password: str = data["password"]
-            user: User = User.objects.get(username=username)
+            user: User = User.objects.get(email=email)
             byte_password: bytearray = password.encode("utf-8")
             byte_hashed_password: bytearray = user.password.encode("utf-8")
             password_matches = bcrypt.checkpw(byte_password, byte_hashed_password)
@@ -28,7 +28,7 @@ class AuthController(Resource):
                 expiry_time: datetime = datetime.utcnow() + timedelta(hours=6)
 
                 jwt_token: str = jwt.encode(
-                    {"username": username, "id": str(user.id), "exp": expiry_time},
+                    {"id": str(user.id), "exp": expiry_time},
                     os.environ["JWT_SECRET"],
                     algorithm="HS256",
                 )
