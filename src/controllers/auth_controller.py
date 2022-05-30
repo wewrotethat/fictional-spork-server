@@ -35,7 +35,7 @@ class AuthController(Resource):
                 return output_json(
                     code=200,
                     data={
-                        "id": user.id,
+                        "id": str(user.id),
                         "success": True,
                         "token": jwt_token,
                     },
