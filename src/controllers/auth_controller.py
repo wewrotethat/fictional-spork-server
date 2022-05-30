@@ -34,7 +34,11 @@ class AuthController(Resource):
                 )
                 return output_json(
                     code=200,
-                    data={"success": True, "token": jwt_token},
+                    data={
+                        "id": user.id,
+                        "success": True,
+                        "token": jwt_token,
+                    },
                     headers={"content-type": "application/json"},
                 )
             else:
