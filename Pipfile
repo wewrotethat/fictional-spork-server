@@ -11,6 +11,11 @@ python-dotenv = "*"
 bcrypt = "*"
 pyjwt = "*"
 gunicorn = "*"
+pika = "*"
+google-cloud-storage = "*"
+firebase = "*"
+firebase-admin = "*"
+werkzeug = "*"
 
 [dev-packages]
 black = "*"

@@ -1,3 +1,4 @@
+from src.controllers.image_upload_controller import ImageUploadController
 from src.controllers.lab_test_entry_controller import (
     LabTestEntriesController,
     LabTestEntryController,
@@ -17,3 +18,4 @@ def initialize_routes(api):
     )
     api.add_resource(LabTestEntriesController, "/api/lab-test-entries")
     api.add_resource(LabTestEntryController, "/api/lab-test-entries/<id>")
+    api.add_resource(ImageUploadController, "/api/lab-test-entries/image")
