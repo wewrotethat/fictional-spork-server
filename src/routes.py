@@ -18,4 +18,3 @@ def initialize_routes(api):
     )
     api.add_resource(LabTestEntriesController, "/api/lab-test-entries")
     api.add_resource(LabTestEntryController, "/api/lab-test-entries/<id>")
-    api.add_resource(ImageUploadController, "/api/lab-test-entries/image")
