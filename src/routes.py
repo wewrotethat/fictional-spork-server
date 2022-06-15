@@ -1,4 +1,3 @@
-from src.controllers.image_upload_controller import ImageUploadController
 from src.controllers.lab_test_entry_controller import (
     LabTestEntriesController,
     LabTestEntryController,

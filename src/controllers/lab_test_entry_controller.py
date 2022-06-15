@@ -12,7 +12,6 @@ from src.services.image_upload import upload_image_to_cloud_storage, upload_imag
 class LabTestEntriesController(Resource):
     method_decorators = [authenticate]
 
-
     def post(self, req: Request):
         try:
             data: str = request.get_data()
@@ -41,7 +40,7 @@ class LabTestEntriesController(Resource):
             )
         except Exception as e:
             return output_json(
-                data={"error":  str(e)},
+                data={"error": str(e)},
                 code=500,
             )
 
@@ -70,9 +69,9 @@ class TechnicialLabTestEntriesController(Resource):
 
 class LabTestEntryController(Resource):
     method_decorators = [authenticate]
+
     def __init__(self):
         self.parser = reqparse.RequestParser()
-
 
     def get(self, req: Request, id: str):
         lab_test_entry: LabTestEntry = LabTestEntry.objects.get(id=id)
@@ -82,15 +81,10 @@ class LabTestEntryController(Resource):
             lab_test_entry_dict, code=200, headers={"content-type": "application/json"}
         )
 
+    # this one is for updating bloodSmearURL (and takes multipart-form, we might need another endpoint for updating
+    # <result> field.
     def put(self, req: Request, id: str):
         upload_service_res = upload_image_service(self.parser)
-        if upload_service_res is not str:
-            return output_json(
-                data=upload_service_res,
-                code=400,
-                headers={"content-type": "application/json"},
-            )
-        update_field = {'bloodSmearImageUrl': upload_service_res}
         lab_test_entry: LabTestEntry = LabTestEntry.objects.get(id=id)
         if req.current_user.id != lab_test_entry.technician_id:
             return output_json(
@@ -99,7 +93,7 @@ class LabTestEntryController(Resource):
                 headers={"content-type": "application/json"},
             )
 
-        lab_test_entry.update(**update_field)
+        lab_test_entry.update(set__blood_smear_image_url=upload_service_res)
         updated_lab_test_entry: LabTestEntry = LabTestEntry.objects.get(id=id)
         updated_lab_test_entry_dict: dict = updated_lab_test_entry.__dict__()
         return output_json(

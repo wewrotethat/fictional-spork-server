@@ -11,7 +11,7 @@ class LabTestEntry(db.Document):
         max_length=50, required=True, db_field="technicianId"
     )
     patient_id = db.StringField(max_length=50, required=True, db_field="patientId")
-    blood_smear_image_url = db.StringField(max_length=50, db_field="bloodSmearImageUrl")
+    blood_smear_image_url = db.StringField(db_field="bloodSmearImageUrl")
     result = db.EmbeddedDocumentField(
         LabResult,
         db_field="medicalLicenseId",

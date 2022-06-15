@@ -13,11 +13,10 @@ UPLOAD_DIR = os.path.abspath(os.path.dirname(__file__))
 def upload_image_service(parser: RequestParser):
     parser.add_argument("file", type=werkzeug.datastructures.FileStorage, location='files')
     args = parser.parse_args()
-    if 'file' not in request.files:
-        return {'errorMessage': 'No file part'}, 400
     file = args.get("file")
-    # if user does not select file, browser also
-    # submit an empty part without filename
+    if file is None:
+        return {'errorMessage': 'No file part'}, 400
+
     if file.filename == '':
         return {'errorMessage': 'No selected file'}, 400
     if file and allowed_file(file.filename):
