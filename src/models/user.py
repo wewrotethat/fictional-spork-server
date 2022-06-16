@@ -21,7 +21,7 @@ class User(db.Document):
         default=ProfileVerificationStatus.UNVERIFIED,
         db_field="profileVerificationStatus",
     )
-    profile_picture_url = db.URLField(required=True, db_field="profilePictureUrl")
+    profile_picture_url = db.URLField(db_field="profilePictureUrl")
     phone_verification_status = db.EnumField(
         PhoneVerificationStatus,
         default=PhoneVerificationStatus.UNVERIFIED,
