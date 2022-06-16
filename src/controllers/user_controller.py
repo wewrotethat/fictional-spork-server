@@ -7,6 +7,27 @@ from mongoengine.errors import ValidationError, NotUniqueError, FieldDoesNotExis
 
 
 class UsersController(Resource):
+    @authenticate
+    # args had to be flipped because of argument unpacking in the authenticate middleware
+    def get(req: Request, _):
+        try:
+            user: User = User.objects.get(id=req.current_user.id)
+            user_dict: dict = user.__dict__()
+            return output_json(
+                data=user_dict, code=200, headers={"content-type": "application/json"}
+            )
+        except FieldDoesNotExist as e:
+            return output_json(
+                data={"error": str(e)},
+                code=400,
+                headers={"content-type": "application/json"},
+            )
+        except Exception as e:
+            return output_json(
+                data={"error": "some error occurred in our servers"},
+                code=500,
+            )
+
     def post(self):
         try:
             data: str = request.get_data()
