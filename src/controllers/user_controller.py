@@ -65,6 +65,19 @@ class UsersController(Resource):
                 code=500,
             )
 
+    @authenticate
+    # args had to be flipped because of argument unpacking in the authenticate middleware
+    def put(req: Request, _):
+        id = req.current_user.id
+        data: str = request.get_json()
+        user: User = User.objects.get(id=id)
+        user.update(**data)
+        updated_user: User = User.objects.get(id=id)
+        updated_user_dict: dict = updated_user.__dict__()
+        return output_json(
+            updated_user_dict, code=200, headers={"content-type": "application/json"}
+        )
+
 
 class UserController(Resource):
     method_decorators = [authenticate]
