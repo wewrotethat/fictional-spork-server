@@ -4,35 +4,35 @@ import werkzeug
 from firebase_admin import storage
 from flask import request
 from flask_restful.reqparse import RequestParser
+from werkzeug.utils import secure_filename
 
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
-UPLOAD_DIR = os.path.abspath(os.path.dirname(__file__))
 
-def upload_image_service(parser: RequestParser):
-    parser.add_argument("file", type=werkzeug.datastructures.FileStorage, location='files')
+def upload_image_service(parser: RequestParser, id: str) -> str:
+    parser.add_argument(
+        "file", type=werkzeug.datastructures.FileStorage, location="files"
+    )
     args = parser.parse_args()
     file = args.get("file")
-    if file is None:
-        return {'errorMessage': 'No file part'}, 400
+    if file is None or file.filename == "":
+        return
 
-    if file.filename == '':
-        return {'errorMessage': 'No selected file'}, 400
     if file and allowed_file(file.filename):
-        file.save(os.path.join(UPLOAD_DIR, file.filename))
-        return upload_image_to_cloud_storage(os.path.join(UPLOAD_DIR, file.filename))
+        file.filename = id + "." + file.filename.rsplit(".", 1)[1].lower()
+        upload_result = upload_image_to_cloud_storage(file)
+        return upload_result
 
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def upload_image_to_cloud_storage(image_file):
-    fileName = image_file
+def upload_image_to_cloud_storage(file):
     bucket = storage.bucket()
-    blob = bucket.blob(fileName)
-    blob.upload_from_filename(fileName)
+    # file is just an object from request.files e.g. file = request.files['myFile']
+    blob = bucket.blob(file.filename)
+    blob.upload_from_file(file)
     blob.make_public()
     return blob.public_url

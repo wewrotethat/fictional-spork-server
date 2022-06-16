@@ -1,6 +1,7 @@
 from src.controllers.lab_test_entry_controller import (
     LabTestEntriesController,
     LabTestEntryController,
+    LabTestEntrySampleImageController,
     TechnicialLabTestEntriesController,
 )
 from src.controllers.auth_controller import AuthController
@@ -17,3 +18,6 @@ def initialize_routes(api):
     )
     api.add_resource(LabTestEntriesController, "/api/lab-test-entries")
     api.add_resource(LabTestEntryController, "/api/lab-test-entries/<id>")
+    api.add_resource(
+        LabTestEntrySampleImageController, "/api/lab-test-entries/<id>/sample-image"
+    )
