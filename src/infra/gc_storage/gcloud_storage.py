@@ -17,4 +17,4 @@ def initialize_firebase_storage():
         "client_x509_cert_url": os.environ.get("FIREBASE_CLIENT_X509_CERT_URL"),
     }
     cred = credentials.Certificate(cert)
-    initialize_app(cred, {"storageBucket": "fictional-spork-server.appspot.com"})
+    initialize_app(cred, {"storageBucket": "fictional-spork.appspot.com"})
