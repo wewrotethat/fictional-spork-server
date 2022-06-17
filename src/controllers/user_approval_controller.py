@@ -1,6 +1,6 @@
 from flask import Request, request
 from flask_restful import Resource, output_json
-from services.cloud_messaging import sendPushForTokens
+from src.services.cloud_messaging import sendPushForTokens
 from src.models.enums.profile_verification_status import ProfileVerificationStatus
 from src.middlewares.authentication_middleware import authenticate
 from src.middlewares.authorization_middleware import authorize
