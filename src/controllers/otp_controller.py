@@ -1,5 +1,6 @@
+from datetime import timedelta, datetime
 import bcrypt
-from flask import Request
+from flask import Request, request
 from flask_restful import output_json, Resource
 from src.helpers.otp_message_builder import OtpMessageBuilder
 from src.services.sms_service import SmsService
@@ -24,9 +25,10 @@ class OtpController(Resource):
             )
         try:
             otp_code = generateOtp()
-            byte_password: bytearray = otp_code.encode("utf-8")
+            byte_otp: bytearray = otp_code.encode("utf-8")
             salt: str = bcrypt.gensalt()
-            hashed_password: str = bcrypt.hashpw(byte_password, salt)
+            hashed_password: str = bcrypt.hashpw(byte_otp, salt)
+            Otp.objects(user_id=current_user.id).delete()
             otp: Otp = Otp(
                 user_id=current_user.id,
                 phone_number=current_user.phone_number,
@@ -54,7 +56,66 @@ class OtpController(Resource):
 
         except Exception as e:
             return output_json(
-                data={"error": "some error occurred in our db"},
+                data={"error": "some error occurred in our system"},
+                code=500,
+                headers={"content-type": "application/json"},
+            )
+
+    def post(self, req: Request):
+        try:
+            current_user: User = req.current_user
+            data: str = request.get_json()
+
+            otp_code: str = data["otp"]
+            otp: Otp = Otp.objects.get(user_id=req.current_user.id)
+            if otp is None:
+                return output_json(
+                    data={"error": "OTP not found"},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
+
+            if (otp.created_at + timedelta(hours=1)) < datetime.utcnow():
+                return output_json(
+                    data={"error": "OTP expired"},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
+
+            if otp.trials >= 3:
+                return output_json(
+                    data={"error": "OTP trials exceeded"},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
+
+            byte_otp: bytearray = otp_code.encode("utf-8")
+            byte_hashed_otp: bytearray = otp.otp.encode("utf-8")
+            otp_matches = bcrypt.checkpw(byte_otp, byte_hashed_otp)
+
+            if otp_matches:
+                current_user.phone_verification_status = (
+                    PhoneVerificationStatus.VERIFIED
+                )
+                current_user.save()
+                return output_json(
+                    data={"message": "phone number verified"},
+                    code=200,
+                    headers={"content-type": "application/json"},
+                )
+
+            else:
+                otp.trials += 1
+                otp.save()
+                return output_json(
+                    data={"error": "OTP is incorrect"},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
+
+        except Exception as e:
+            return output_json(
+                data={"error": "some error occurred in our system"},
                 code=500,
                 headers={"content-type": "application/json"},
             )

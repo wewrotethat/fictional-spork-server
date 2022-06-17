@@ -19,6 +19,7 @@ class SmsService:
         )
 
         response_json: dict = response.json()
+        
         if response_json["status"] == 200:
             return True
         else:

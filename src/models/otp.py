@@ -8,6 +8,7 @@ class Otp(db.Document):
     phone_number = db.StringField(max_length=50, required=True, db_field="phoneNumber")
     otp = db.StringField(required=True, db_field="otp")
     verified = db.BooleanField(default=False, db_field="verified")
+    trials = db.IntField(default=0, db_field="trials")
     created_at = db.DateTimeField(
         required=True, default=datetime.utcnow, db_field="createdAt"
     )
