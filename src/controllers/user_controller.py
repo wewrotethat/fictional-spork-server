@@ -27,6 +27,7 @@ class UsersController(Resource):
             return output_json(
                 data={"error": "some error occurred in our servers"},
                 code=500,
+                headers={"content-type": "application/json"},
             )
 
     def post(self):
@@ -64,6 +65,7 @@ class UsersController(Resource):
             return output_json(
                 data={"error": "some error occurred in our servers"},
                 code=500,
+                headers={"content-type": "application/json"},
             )
 
     @authenticate

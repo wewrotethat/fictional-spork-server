@@ -4,8 +4,9 @@ import os
 
 import jwt
 import bcrypt
-from flask import Response, request
+from flask import Request, Response, request
 from flask_restful import Resource, output_json
+from src.middlewares.authentication_middleware import authenticate
 
 from src.models.user import User
 
@@ -55,3 +56,25 @@ class AuthController(Resource):
                 return error_response
         except Exception as _:
             return error_response
+
+    @authenticate
+    def delete(req: Request, _):
+        try:
+            device_token: str = req.args["deviceToken"] if "deviceToken" else None
+            if device_token:
+                current_user = req.current_user
+                if device_token in current_user.device_tokens:
+
+                    current_user.device_tokens.remove(device_token)
+                    current_user.save()
+            return output_json(
+                data={'message': "user has been logged out"},
+                code=200,
+                headers={"content-type": "application/json"},
+            )
+        except Exception as _:
+            return output_json(
+                data={"error": "some error occurred in our servers"},
+                code=500,
+                headers={"content-type": "application/json"},
+            )
