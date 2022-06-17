@@ -1,3 +1,4 @@
+from src.controllers.user_approval_controller import UserApprovalController
 from src.controllers.otp_controller import OtpController
 from src.controllers.lab_test_entry_controller import (
     LabTestEntriesController,
@@ -22,4 +23,7 @@ def initialize_routes(api):
     api.add_resource(LabTestEntryController, "/api/lab-test-entries/<id>")
     api.add_resource(
         LabTestEntrySampleImageController, "/api/lab-test-entries/<id>/sample-image"
+    )
+    api.add_resource(
+        UserApprovalController, "/api/admin/users/approval"
     )

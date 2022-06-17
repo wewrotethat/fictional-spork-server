@@ -18,19 +18,20 @@ class User(db.Document):
     )
     profile_verification_status = db.EnumField(
         ProfileVerificationStatus,
-        default=ProfileVerificationStatus.UNVERIFIED,
+        default=ProfileVerificationStatus.PENDING,
         db_field="profileVerificationStatus",
     )
     profile_picture_url = db.URLField(db_field="profilePictureUrl")
     phone_verification_status = db.EnumField(
         PhoneVerificationStatus,
-        default=PhoneVerificationStatus.UNVERIFIED,
+        default=PhoneVerificationStatus.PENDING,
         db_field="phoneVerificationStatus",
     )
 
     device_tokens = db.ListField(
         db.StringField(max_length=50), default=[], db_field="deviceTokens"
     )
+    roles = db.ListField(db.StringField(max_length=50), default=['technician'], db_field="roles")
     created_at = db.DateTimeField(
         required=True, default=datetime.utcnow, db_field="createdAt"
     )
