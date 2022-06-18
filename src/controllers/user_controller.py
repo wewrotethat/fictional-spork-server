@@ -41,6 +41,18 @@ class UsersController(Resource):
                     code=400,
                     headers={"content-type": "application/json"},
                 )
+            if User.objects(email=data_dict["email"]).first():
+                return output_json(
+                    data={"error": "email already exists"},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
+            if User.objects(phone_number=data_dict["phoneNumber"]).first():
+                return output_json(
+                    data={"error": "phone number already exists"},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
             data: str = request.get_data()
             user: User = User.from_json(data)
             byte_password: bytearray = user.password.encode("utf-8")
