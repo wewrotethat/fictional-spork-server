@@ -1,5 +1,6 @@
 import bcrypt
 from flask import request, Request
+from src.helpers.validators.user_validators.user_validators import UserValidators
 from src.services.image_upload import upload_image_service
 from src.middlewares.authentication_middleware import authenticate
 from src.models.user import User
@@ -32,6 +33,14 @@ class UsersController(Resource):
 
     def post(self):
         try:
+            data_dict: dict = request.get_json()
+            validation_result: list = UserValidators().validateSignUpInput(data_dict)
+            if len(validation_result) > 0:
+                return output_json(
+                    data={"validation_errors": validation_result},
+                    code=400,
+                    headers={"content-type": "application/json"},
+                )
             data: str = request.get_data()
             user: User = User.from_json(data)
             byte_password: bytearray = user.password.encode("utf-8")
@@ -42,24 +51,6 @@ class UsersController(Resource):
             user_dict: dict = user.__dict__()
             return output_json(
                 data=user_dict, code=201, headers={"content-type": "application/json"}
-            )
-        except ValidationError as e:
-            return output_json(
-                data={"error": str(e)},
-                code=400,
-                headers={"content-type": "application/json"},
-            )
-        except NotUniqueError as e:
-            return output_json(
-                data={"error": str(e)},
-                code=400,
-                headers={"content-type": "application/json"},
-            )
-        except FieldDoesNotExist as e:
-            return output_json(
-                data={"error": str(e)},
-                code=400,
-                headers={"content-type": "application/json"},
             )
         except Exception as e:
             return output_json(
