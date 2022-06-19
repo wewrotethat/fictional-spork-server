@@ -1,5 +1,6 @@
 import bcrypt
 from flask import request, Request
+from src.middlewares.authorization_middleware import authorize
 from src.helpers.validators.user_validators.user_validators import UserValidators
 from src.services.image_upload import upload_image_service
 from src.middlewares.authentication_middleware import authenticate
@@ -10,13 +11,14 @@ from mongoengine.errors import ValidationError, NotUniqueError, FieldDoesNotExis
 
 class UsersController(Resource):
     @authenticate
+    @authorize
     # args had to be flipped because of argument unpacking in the authenticate middleware
-    def get(req: Request, _):
+    def get(req: Request, _, __):
         try:
-            user: User = User.objects.get(id=req.current_user.id)
-            user_dict: dict = user.__dict__()
+            users: list[User] = User.objects
+            users_dict: list[dict] = [user.__dict__() for user in users]
             return output_json(
-                data=user_dict, code=200, headers={"content-type": "application/json"}
+                data=users_dict, code=200, headers={"content-type": "application/json"}
             )
         except FieldDoesNotExist as e:
             return output_json(
@@ -88,7 +90,8 @@ class UsersController(Resource):
 class UserController(Resource):
     method_decorators = [authenticate]
 
-    def get(self, req: Request, id: str):
+    def get(self, req: Request):
+        id: str = req.current_user.id
         user: User = User.objects.get(id=id)
         user.id = str(user.id)
         user_dict: dict = user.__dict__()
@@ -96,7 +99,8 @@ class UserController(Resource):
             user_dict, code=200, headers={"content-type": "application/json"}
         )
 
-    def put(self, req: Request, id: str):
+    def put(self, req: Request):
+        id: str = req.current_user.id
         if req.current_user.id != id:
             return output_json(
                 data={"error": "you are not authorized to access this data"},

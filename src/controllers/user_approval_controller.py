@@ -38,10 +38,10 @@ class UserApprovalController(Resource):
                 headers={"content-type": "application/json"},
             )
 
-    def getTitle(_: User):
+    def getTitle(self, _: User):
         return f"Profile Verification Status Update"
 
-    def getBody(user: User):
+    def getBody(self, user: User):
         if user.profile_verification_status == ProfileVerificationStatus.REJECTED:
             return f"Dear {user.first_name}, your request to verify your account has been Rejected. Please resubmit a correct Medical License ID."
         elif user.profile_verification_status == ProfileVerificationStatus.VERIFIED:

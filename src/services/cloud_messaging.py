@@ -11,8 +11,8 @@ def sendPushForTokens(
         notification=messaging.Notification(
             title=title,
             body=body,
-            data=data,
         ),
+        data=data,
         tokens=tokens,
     )
     messaging.send_multicast(message)
