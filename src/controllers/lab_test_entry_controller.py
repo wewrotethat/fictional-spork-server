@@ -72,16 +72,17 @@ class TechnicialLabTestEntriesController(Resource):
                 code=403,
                 headers={"content-type": "application/json"},
             )
+        
+        lab_test_entries_dict: list = []
 
         lab_test_entries: list = LabTestEntry.objects(technician_id=technician_id)
         for lab_test_entry in lab_test_entries:
             lab_test_entry_dict: dict = lab_test_entry.__dict__()
-            lab_test_entry_dict['patientInfo'] = getPatientInfo(patientId=lab_test_entry.patient_id)
-        lab_test_entry_dicts: list = [
-            lab_test_entry.__dict__() for lab_test_entry in lab_test_entries
-        ]
+            patient_info = getPatientInfo(patientId=lab_test_entry.patient_id)
+            lab_test_entry_dict['patientInfo'] = patient_info
+            lab_test_entries_dict.append(lab_test_entry_dict)
         return output_json(
-            data=lab_test_entry_dicts,
+            data=lab_test_entries_dict,
             code=200,
             headers={"content-type": "application/json"},
         )
