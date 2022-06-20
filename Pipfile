@@ -15,6 +15,7 @@ google-cloud-storage = "*"
 firebase = "*"
 firebase-admin = "*"
 werkzeug = "*"
+apscheduler = "*"
 
 [dev-packages]
 black = "*"
