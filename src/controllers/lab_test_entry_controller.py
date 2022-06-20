@@ -30,13 +30,6 @@ class LabTestEntriesController(Resource):
                 )
             patient_id = data_dict["patientId"]
             patient_info = getPatientInfo(patientId=patient_id)
-            if patient_info is None:
-                return output_json(
-                    data={"message": "patientId is invalid"},
-                    code=400,
-                    headers={"content-type": "application/json"},
-                )
-            
 
             lab_test_entry: LabTestEntry = LabTestEntry.from_json(data)
             lab_test_entry.technician_id = req.current_user.id
@@ -81,6 +74,9 @@ class TechnicialLabTestEntriesController(Resource):
             )
 
         lab_test_entries: list = LabTestEntry.objects(technician_id=technician_id)
+        for lab_test_entry in lab_test_entries:
+            lab_test_entry_dict: dict = lab_test_entry.__dict__()
+            lab_test_entry_dict['patientInfo'] = getPatientInfo(patientId=lab_test_entry.patient_id)
         lab_test_entry_dicts: list = [
             lab_test_entry.__dict__() for lab_test_entry in lab_test_entries
         ]
@@ -97,12 +93,6 @@ class LabTestEntryController(Resource):
     def get(self, req: Request, id: str):
         lab_test_entry: LabTestEntry = LabTestEntry.objects.get(id=id)
         patient_info = getPatientInfo(patientId=lab_test_entry.patient_id)
-        if patient_info is None:
-            return output_json(
-                data={"message": "patientId is invalid"},
-                code=400,
-                headers={"content-type": "application/json"},
-            )
         lab_test_entry.id = str(lab_test_entry.id)
         lab_test_entry_dict: dict = lab_test_entry.__dict__()
         lab_test_entry_dict['patientInfo'] = patient_info
