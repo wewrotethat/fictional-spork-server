@@ -1,4 +1,5 @@
 from datetime import datetime
+from email.policy import default
 from enum import unique
 from src.models.lab_result import LabResult
 from src.database.db import db
@@ -16,6 +17,9 @@ class LabTestEntry(db.Document):
         LabResult,
         db_field="medicalLicenseId",
     )
+    status = db.StringField(
+        max_length=50, default='pending', db_field="status"
+    )
     created_at = db.DateTimeField(
         required=True, default=datetime.utcnow, db_field="createdAt"
     )
@@ -30,6 +34,7 @@ class LabTestEntry(db.Document):
             "technicianId": self.technician_id,
             "bloodSmearImageUrl": self.blood_smear_image_url,
             "result": self.result.__dict__() if self.result else None,
+            "status": self.status,
             "createdAt": str(self.created_at),
             "updatedAt": str(self.updated_at),
         }
