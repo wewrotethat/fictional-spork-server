@@ -36,7 +36,7 @@ class LabTestEntriesController(Resource):
 
             lab_test_entry.save()
             lab_test_entry_dict: dict = lab_test_entry.__dict__()
-            lab_test_entry_dict['patientInfo'] = patient_info
+            lab_test_entry_dict["patientInfo"] = patient_info
             return output_json(
                 data=lab_test_entry_dict,
                 code=201,
@@ -61,20 +61,19 @@ class LabTestEntriesController(Resource):
             )
 
 
-
 class TechnicialLabTestEntriesController(Resource):
     method_decorators = [authenticate]
 
     def get(self, req: Request):
         technician_id: str = req.current_user.id
-        
+
         lab_test_entries_dict: list = []
 
         lab_test_entries: list = LabTestEntry.objects(technician_id=technician_id)
         for lab_test_entry in lab_test_entries:
             lab_test_entry_dict: dict = lab_test_entry.__dict__()
             patient_info = getPatientInfo(patientId=lab_test_entry.patient_id)
-            lab_test_entry_dict['patientInfo'] = patient_info
+            lab_test_entry_dict["patientInfo"] = patient_info
             lab_test_entries_dict.append(lab_test_entry_dict)
         return output_json(
             data=lab_test_entries_dict,
@@ -91,7 +90,7 @@ class LabTestEntryController(Resource):
         patient_info = getPatientInfo(patientId=lab_test_entry.patient_id)
         lab_test_entry.id = str(lab_test_entry.id)
         lab_test_entry_dict: dict = lab_test_entry.__dict__()
-        lab_test_entry_dict['patientInfo'] = patient_info
+        lab_test_entry_dict["patientInfo"] = patient_info
         return output_json(
             lab_test_entry_dict, code=200, headers={"content-type": "application/json"}
         )
@@ -139,7 +138,9 @@ class LabTestEntrySampleImageController(Resource):
                 headers={"content-type": "application/json"},
             )
 
-        lab_test_entry.update(set__blood_smear_image_url=upload_service_res)
+        lab_test_entry.blood_smear_image_url = upload_service_res
+        lab_test_entry.status = "queued"
+        lab_test_entry.save()
         updated_lab_test_entry: LabTestEntry = LabTestEntry.objects.get(id=id)
         updated_lab_test_entry_dict: dict = updated_lab_test_entry.__dict__()
         return output_json(

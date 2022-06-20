@@ -16,6 +16,7 @@ def run_recognition_model():
         for entry in entries:
             try:
                 entry.result = LabResult(status="infected", stage="1")
+                entry.status = "ready"
                 entry.save()
                 owner: User = User.objects.get(id=entry.technician_id)
                 sendPushForTokens(owner.device_tokens)

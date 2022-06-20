@@ -25,7 +25,7 @@ scheduler = APScheduler()
 # scheduler.api_enabled = True
 scheduler.init_app(app)
 
-@scheduler.task('cron', id='run_model', minute='*')
+@scheduler.task('interval', id='run_model', seconds=30, misfire_grace_time=900)
 def run_model():
     run_recognition_model()
     print('run_model executed')
