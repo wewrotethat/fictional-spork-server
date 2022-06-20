@@ -1,18 +1,16 @@
-from apscheduler.schedulers.blocking import BlockingScheduler
-from services.cloud_messaging import sendPushForTokens
+from src.services.cloud_messaging import sendPushForTokens
 from src.models.user import User
 from src.models.lab_result import LabResult
 from src.models.lab_test_entry import LabTestEntry
 
-sched = BlockingScheduler()
 
 """
 1, young trophozoites (ring forms); 2, growing trophozoites; 3, mature trophozoites; 4, mature schizonts; 5, macrogametocytes; 6, microgametocytes.
 """
 
 
-@sched.scheduled_job("interval", minutes=1)
-def model_runner():
+def run_recognition_model():
+    print("running model")
     try:
         entries = LabTestEntry.objects(status="queued")
         for entry in entries:
