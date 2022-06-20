@@ -65,13 +65,8 @@ class LabTestEntriesController(Resource):
 class TechnicialLabTestEntriesController(Resource):
     method_decorators = [authenticate]
 
-    def get(self, req: Request, technician_id: str):
-        # if req.current_user.id != technician_id:
-        #     return output_json(
-        #         data={"error": "you are not authorized to access this data"},
-        #         code=403,
-        #         headers={"content-type": "application/json"},
-        #     )
+    def get(self, req: Request):
+        technician_id: str = req.current_user.id
         
         lab_test_entries_dict: list = []
 

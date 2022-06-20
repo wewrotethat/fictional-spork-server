@@ -22,7 +22,7 @@ def initialize_routes(api):
     api.add_resource(UserProfilePictureController, "/api/users/profile-picture")
     api.add_resource(
         TechnicialLabTestEntriesController,
-        "/api/users/<technician_id>/lab-test-entries",
+        "/api/users/me/lab-test-entries",
     )
     api.add_resource(
         LabTestEntrySampleImageController, "/api/lab-test-entries/<id>/sample-image"
